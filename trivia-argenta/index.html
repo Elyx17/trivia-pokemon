@@ -1,0 +1,886 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trivia Argenta</title>
+<meta name="theme-color" content="#0D3B30">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap">
+<style>
+:root{
+  --bg:#0D3B30; --bg2:#092C24; --card:#12493C; --line:#2A6453;
+  --ink:#FFF4DC; --muted:#B7D1C2; --gold:#F2C230; --red:#D7263D;
+  --cel:#74ACDF; --mint:#8FD18B;
+  --row:50px; --gap:6px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{
+  background:radial-gradient(120% 60% at 50% 0%, #135443 0%, var(--bg) 55%, var(--bg2) 100%) fixed, var(--bg);
+  color:var(--ink);
+  font:16px/1.45 "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  overflow-x:hidden;
+}
+.wrap{max-width:560px;margin:0 auto;padding-inline:16px;padding-block:14px 48px;display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{margin:0;text-wrap:balance}
+.brand{font-family:"Alfa Slab One", Georgia, serif;color:var(--gold);text-shadow:3px 3px 0 var(--red);letter-spacing:.5px;line-height:1.05}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.top .brand{font-size:1.25rem;text-shadow:2px 2px 0 var(--red)}
+.pill{font-size:.8rem;font-weight:600;padding:4px 10px;border-radius:99px;background:var(--card);color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--mint);display:inline-block}
+.pill.bad i{background:var(--red)} .pill.wait i{background:var(--gold);animation:blink 1s infinite}
+.eyebrow{font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:600}
+.muted{color:var(--muted)}
+.filete{border:3px solid var(--gold);outline:2px solid var(--gold);outline-offset:4px;border-radius:16px;margin:6px;padding:18px;background:rgba(0,0,0,.12)}
+.hero{text-align:center;padding-block:24px 8px;display:flex;flex-direction:column;gap:10px;align-items:center}
+.hero .brand{font-size:clamp(2.4rem,11vw,3.6rem)}
+.hero p{margin:0;max-width:34ch}
+label{font-weight:600;display:block;margin-bottom:6px}
+input{width:100%;font:inherit;font-size:1.2rem;padding:14px 16px;border-radius:12px;border:2px solid var(--line);background:var(--bg2);color:var(--ink)}
+input:focus{outline:none;border-color:var(--gold)}
+.form{display:flex;flex-direction:column;gap:14px}
+button{font:inherit;cursor:pointer}
+.btn{border:0;border-radius:14px;padding:16px 18px;font-weight:800;font-size:1.1rem;background:var(--gold);color:#2A1E00;box-shadow:0 4px 0 #A9820F;transition:transform .06s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #A9820F}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:none;border:2px solid var(--line)}
+.btn.small{padding:10px 14px;font-size:.95rem}
+button:focus-visible,input:focus-visible{outline:3px solid var(--cel);outline-offset:2px}
+.linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;padding:8px}
+.code{font-family:"Alfa Slab One", Georgia, serif;font-size:clamp(3rem,16vw,4.6rem);color:var(--gold);letter-spacing:.08em;text-shadow:3px 3px 0 var(--red);line-height:1}
+.center{text-align:center}
+.share{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.linktext{font-size:.85rem;word-break:break-all;color:var(--muted);user-select:all}
+.qr{display:flex;justify-content:center}
+.qr img{width:180px;height:180px;image-rendering:pixelated;border-radius:10px;background:#fff;padding:6px}
+.warn{background:#5A1620;border:2px solid var(--red);border-radius:12px;padding:12px 14px;font-size:.92rem}
+.chips{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.chips li{background:var(--card);border-radius:99px;padding:6px 6px 6px 14px;display:flex;align-items:center;gap:6px;font-weight:600}
+.chips li.off{opacity:.5}
+.chips li.new{animation:pop .45s cubic-bezier(.3,1.6,.5,1) both}
+.chips button{border:0;background:rgba(0,0,0,.25);color:var(--muted);width:28px;height:28px;border-radius:50%;font-size:.9rem;line-height:1}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.cat{background:var(--red);color:#fff;font-weight:700;font-size:.8rem;padding:4px 10px;border-radius:99px;text-transform:uppercase;letter-spacing:.06em}
+.qtext{font-size:clamp(1.3rem,5.4vw,1.7rem);line-height:1.25;font-weight:800}
+.clock{font-family:"Alfa Slab One", Georgia, serif;font-size:2.4rem;color:var(--gold);min-width:2ch;text-align:right;font-variant-numeric:tabular-nums}
+.clock.low{color:#FF6B7C;animation:pulse .5s ease-in-out infinite alternate}
+.tbar{height:10px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden}
+.tbar i{display:block;height:100%;background:var(--gold);border-radius:99px;transition:width .2s linear, background .3s}
+.tbar.low i{background:var(--red)}
+.opts{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.opt{width:100%;display:flex;align-items:center;gap:12px;min-height:64px;border-radius:14px;border:0;padding:12px 16px;text-align:left;font-weight:700;font-size:1.08rem;position:relative;transition:opacity .3s, transform .15s, box-shadow .3s}
+.opt .sh{font-size:1.2rem;width:26px;flex:none;text-align:center}
+.opt .tx{flex:1}
+.opt .n{font-variant-numeric:tabular-nums;font-weight:800;background:rgba(0,0,0,.18);padding:2px 10px;border-radius:99px}
+.o0{background:var(--cel);color:#0A2233} .o1{background:var(--gold);color:#2A1E00}
+.o2{background:var(--red);color:#fff} .o3{background:var(--mint);color:#0B2A12}
+button.opt:hover{transform:translateY(-2px)}
+button.opt:active{transform:scale(.96)}
+.opts.locked .opt{opacity:.3} .opts.locked .opt.me{opacity:1;box-shadow:0 0 0 4px var(--ink);transform:scale(1.02)}
+.opts.rev .opt{opacity:.3} .opts.rev .opt.ok{opacity:1;box-shadow:0 0 0 4px var(--ink)}
+.opts.rev .opt.me:not(.ok){opacity:.6;text-decoration:line-through}
+.opt.ok::after{content:"✓";font-size:1.4rem;font-weight:900;margin-left:auto}
+.anim .opts.rev .opt.ok{animation:winner .7s .25s cubic-bezier(.3,1.6,.5,1) both}
+.anim .opts.rev .opt.me:not(.ok){animation:shake .5s .2s both}
+.votebar{position:absolute;left:0;bottom:0;height:5px;background:rgba(0,0,0,.35);border-radius:0 3px 3px 14px;width:0;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.meter{display:flex;flex-direction:column;gap:6px}
+.dato{background:var(--card);border-radius:14px;padding:14px 16px;font-size:.98rem}
+.dato b{color:var(--gold)}
+.rank{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--gap);font-variant-numeric:tabular-nums}
+.rank li{display:flex;align-items:center;gap:10px;background:var(--card);padding:0 14px;height:var(--row);border-radius:12px;position:relative}
+.rank li.me{background:#1E6B55;box-shadow:0 0 0 2px var(--gold)}
+.rank li.lead{background:linear-gradient(90deg,#3B3510,var(--card) 70%)}
+.rank .pos{font-family:"Alfa Slab One", Georgia, serif;color:var(--gold);width:2.2ch}
+.rank .nm{flex:1;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank .pt{font-weight:800;min-width:5ch;text-align:right}
+.rank .gain{color:var(--mint);font-size:.85rem;font-weight:700}
+.move{font-size:.75rem;font-weight:800;width:3.2ch;text-align:center}
+.move.up{color:var(--mint)} .move.down{color:#FF8A96} .move.same{color:var(--muted)}
+.anim .rank.board li{animation:slide .9s cubic-bezier(.25,.9,.3,1) both;animation-delay:calc(var(--i) * 40ms)}
+.big-result{text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center;padding-block:10px}
+.big-result .icon{font-size:4rem;line-height:1}
+.anim .big-result .icon{animation:bounce .8s cubic-bezier(.3,1.6,.5,1) both}
+.big-result h2{font-family:"Alfa Slab One", Georgia, serif;font-size:2.2rem}
+.good h2{color:var(--mint)} .bad h2{color:#FF8A96} .neutral h2{color:var(--gold)}
+.stat{font-size:1.05rem;margin:0}
+.stat b{color:var(--gold);font-size:1.3rem}
+.podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:end;text-align:center}
+.podium div{background:var(--card);border-radius:12px 12px 4px 4px;padding:10px 6px;display:flex;flex-direction:column;gap:4px;min-width:0;transform-origin:bottom}
+.podium .p1{min-height:150px;background:#1B5A49;border:2px solid var(--gold)} .podium .p2{min-height:120px} .podium .p3{min-height:100px}
+.anim .podium .p3{animation:rise .7s .3s cubic-bezier(.3,1.4,.5,1) both}
+.anim .podium .p2{animation:rise .7s .9s cubic-bezier(.3,1.4,.5,1) both}
+.anim .podium .p1{animation:rise .8s 1.6s cubic-bezier(.3,1.4,.5,1) both}
+.podium .medal{font-family:"Alfa Slab One", Georgia, serif;color:var(--gold);font-size:1.6rem}
+.podium .who{font-weight:800;overflow-wrap:anywhere}
+.podium .sc{font-size:.85rem;color:var(--muted)}
+.wait-dots::after{content:"";animation:dots 1.4s steps(4) infinite}
+.bob{display:inline-block;animation:bob 2.4s ease-in-out infinite}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:10}
+
+/* Entradas: solo corren cuando cambia de pantalla (clase .anim) */
+.anim .enter{animation:up .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--d,0) * 70ms)}
+.anim .opts li{animation:up .45s cubic-bezier(.2,.8,.2,1) both}
+.anim .opts li:nth-child(1){animation-delay:.25s} .anim .opts li:nth-child(2){animation-delay:.33s}
+.anim .opts li:nth-child(3){animation-delay:.41s} .anim .opts li:nth-child(4){animation-delay:.49s}
+.anim .qtext{animation:zoom .5s .05s cubic-bezier(.3,1.4,.5,1) both}
+.anim .code{animation:zoom .6s cubic-bezier(.3,1.6,.5,1) both}
+
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes zoom{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+@keyframes pop{0%{opacity:0;transform:scale(.3)}100%{opacity:1;transform:none}}
+@keyframes bounce{0%{opacity:0;transform:scale(.2) rotate(-20deg)}100%{opacity:1;transform:none}}
+@keyframes winner{0%{transform:scale(1)}40%{transform:scale(1.06)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(3px)}}
+@keyframes pulse{from{transform:scale(1)}to{transform:scale(1.18)}}
+@keyframes blink{50%{opacity:.3}}
+@keyframes rise{from{transform:scaleY(0);opacity:0}to{transform:none;opacity:1}}
+@keyframes slide{from{transform:translateY(calc(var(--from) * (var(--row) + var(--gap))));}to{transform:none}}
+@keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-8px) rotate(4deg)}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .wait-dots::after{content:"..."}
+}
+</style>
+</head>
+<body>
+<div id="app" class="wrap"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script>
+/* ============ PREGUNTAS ============
+   La primera opción de "a" es SIEMPRE la correcta (el juego las mezcla solo). */
+const QUESTIONS = [
+  {cat:'Costumbres', q:'¿Qué día de cada mes se comen ñoquis, con plata abajo del plato?', a:['El 29','El 1','El 15','El último viernes'], d:'La costumbre llegó con la inmigración italiana: se hacía a fin de mes, cuando la plata ya no alcanzaba.'},
+  {cat:'Historieta', q:'¿Quién dibujó a Mafalda?', a:['Quino','Liniers','Fontanarrosa','Caloi'], d:'Mafalda apareció en 1964. Quino se llamaba Joaquín Lavado y era mendocino.'},
+  {cat:'Fútbol', q:'¿Qué equipo juega de local en "El Cilindro" de Avellaneda?', a:['Racing','Independiente','Arsenal','Banfield'], d:'Su nombre oficial es Estadio Presidente Perón. La cancha de Independiente está a pocas cuadras.'},
+  {cat:'Música', q:'¿Cuál es el nombre real de Duki?', a:['Mauro Ezequiel Lombardo','Gonzalo Julián Conde','Mateo Palacios','Valentín Oliva'], d:'Los otros son Bizarrap, Trueno y Wos. Duki arrancó en las batallas de El Quinto Escalón, en Parque Rivadavia.'},
+  {cat:'Música', q:'¿Qué número tiene la BZRP Music Session de Shakira?', a:['#53','#52','#49','#58'], d:'Salió en enero de 2023 y rompió récords de reproducciones en sus primeras 24 horas. La #52 es la de Quevedo.'},
+  {cat:'Kiosco', q:'¿De qué está hecho principalmente el Mantecol?', a:['Maní','Almendras','Avellanas','Sésamo'], d:'Es pariente del halva de Medio Oriente, una receta que trajeron inmigrantes griegos.'},
+  {cat:'Costumbres', q:'¿En qué provincia el fernet con coca es casi la bebida oficial?', a:['Córdoba','Mendoza','Salta','Santa Fe'], d:'Allá se toma en jarra y hasta tiene apodo: "fernando".'},
+  {cat:'Kiosco', q:'¿Qué marca de alfajores nació en Mar del Plata en 1947?', a:['Havanna','Guaymallén','Jorgito','Cachafaz'], d:'Durante décadas, volver de "La Feliz" sin una caja de Havanna era casi un pecado.'},
+  {cat:'Lunfardo', q:'Si algo es "un garrón", ¿qué es?', a:['Algo que te complica o molesta','Algo muy barato','Una comida muy grande','Una fiesta buenísima'], d:'Más lunfardo: "bondi" es colectivo, "fiaca" es pereza y "morfar" es comer.'},
+  {cat:'Rock nacional', q:'Al final del último show de Soda Stereo en 1997, ¿qué dijo Cerati?', a:['"Gracias totales"','"Nos vemos en Disney"','"Hasta la victoria"','"Chau, Buenos Aires"'], d:'Fue en River. La banda volvió diez años después, en 2007, con la gira "Me verás volver".'},
+  {cat:'Cuarteto', q:'¿Quién cantaba "La mano de Dios", la canción dedicada a Maradona?', a:['Rodrigo','La Mona Jiménez','Ulises Bueno','Pablo Lescano'], d:'Rodrigo Bueno, "El Potro", era cordobés. Diego la adoptó como su canción.'},
+  {cat:'Tele', q:'¿Quién condujo Gran Hermano en las ediciones desde 2022?', a:['Santiago del Moro','Jorge Rial','Marcelo Tinelli','Guido Kaczka'], d:'La edición 2022/23 la ganó Marcos Ginocchio, un salteño de perfil muy bajo.'},
+  {cat:'Streaming', q:'¿Quién creó el canal de streaming Luzu TV?', a:['Nico Occhiato','Migue Granados','Coscu','Gastón Edul'], d:'Arrancó en 2020 y "Nadie dice nada" se volvió uno de los programas más vistos del streaming argentino.'},
+  {cat:'Fútbol', q:'¿En qué ciudad nació Lionel Messi?', a:['Rosario','Santa Fe','Córdoba','Buenos Aires'], d:'Jugó en las infantiles de Newell\'s Old Boys y a los 13 años se fue a Barcelona.'},
+  {cat:'Deportes', q:'¿Cómo le dicen a la selección femenina de hockey sobre césped?', a:['Las Leonas','Las Pumas','Las Águilas','Las Guerreras'], d:'Luciana Aymar, su gran figura, fue elegida 8 veces mejor jugadora del mundo.'},
+  {cat:'Deportes', q:'¿En qué equipo de la NBA jugó toda su carrera Manu Ginóbili?', a:['San Antonio Spurs','Los Angeles Lakers','Chicago Bulls','Miami Heat'], d:'Ganó 4 anillos de NBA y el oro olímpico en Atenas 2004 con la Generación Dorada.'},
+  {cat:'Deportes', q:'¿Con qué escudería debutó Franco Colapinto en la Fórmula 1 en 2024?', a:['Williams','Alpine','Red Bull','Ferrari'], d:'Fue el primer argentino en correr un Gran Premio de F1 desde Gastón Mazzacane, en 2001.'},
+  {cat:'Cine', q:'¿Qué película argentina ganó el Oscar a Mejor Película Extranjera en 2010?', a:['El secreto de sus ojos','Relatos salvajes','Argentina, 1985','Nueve reinas'], d:'La dirigió Juan José Campanella. La otra ganadora argentina es "La historia oficial" (1986).'},
+  {cat:'Series', q:'¿Qué historieta argentina se hizo serie de Netflix en 2025, con Ricardo Darín?', a:['El Eternauta','Patoruzú','Isidoro Cañones','Inodoro Pereyra'], d:'La historieta de Oesterheld y Solano López salió en 1957. Todo arranca con una nevada mortal en Buenos Aires.'},
+  {cat:'Costumbres', q:'¿Qué se festeja el 20 de julio, con el celular explotando de mensajes?', a:['El Día del Amigo','El Día del Estudiante','El Día de la Pizza','El Día del Mate'], d:'Lo inventó el argentino Enrique Febbraro, inspirado en la llegada del hombre a la Luna el 20/7/1969.'},
+  {cat:'Comida', q:'¿Qué plato frío de origen piamontés no falta en muchas mesas de Navidad?', a:['Vitel toné','Locro','Matambre a la pizza','Humita'], d:'Es peceto con una salsa a base de atún, anchoas y alcaparras.'},
+  {cat:'Fútbol', q:'¿A qué jugador le dijo Messi "¿Qué mirás, bobo?" en Qatar 2022?', a:['Wout Weghorst','Virgil van Dijk','Kylian Mbappé','Luka Modrić'], d:'Fue después de los cuartos de final contra Países Bajos. La frase terminó en remeras, tazas y tatuajes.'},
+  {cat:'Mate', q:'En una ronda de mate, ¿qué significa decir "gracias" cuando te lo pasan?', a:['Que no querés más','Que estaba rico','Que querés otro','Que te toca cebar'], d:'Otra regla de oro: la bombilla no se toca.'},
+  {cat:'Truco', q:'En el truco, ¿cuál es la carta más alta?', a:['El ancho de espada','El ancho de basto','El 7 de espada','El 7 de oro'], d:'Después vienen el ancho de basto, el 7 de espada y el 7 de oro.'},
+  {cat:'Música', q:'¿Qué cantante es conocida como "La Nena de Argentina"?', a:['María Becerra','Tini','Nicki Nicole','Emilia Mernes'], d:'Es de Quilmes y antes de cantar era youtuber.'},
+  {cat:'Freestyle', q:'¿Qué rapero argentino ganó la Red Bull Batalla Internacional 2018?', a:['Wos','Trueno','Duki','Dtoke'], d:'La final se hizo en Buenos Aires y le ganó al mexicano Aczino.'},
+  {cat:'Fútbol', q:'¿En qué ciudad se jugó la final River-Boca de la Copa Libertadores 2018?', a:['Madrid','Asunción','Montevideo','Miami'], d:'Se jugó en el Santiago Bernabéu y River ganó 3 a 1 en el alargue.'},
+  {cat:'Tele', q:'¿Cómo se llamaba el personaje de Guillermo Francella en "Casados con hijos"?', a:['Pepe Argento','Coqui Argento','Dardo Fuseneco','Pepe Sánchez'], d:'Pepe vendía zapatos de mujer. La serie es la versión argentina de "Married... with Children".'},
+  {cat:'Calle', q:'¿Cómo se llama el arte porteño de letras y flores de colores que se ve en colectivos y carteles?', a:['Fileteado','Grafiti','Mosaiquismo','Esgrafiado'], d:'En 2015 la UNESCO lo declaró Patrimonio Cultural Inmaterial de la Humanidad.'},
+  {cat:'Comida', q:'¿Con qué harina se hace la fainá que va arriba de la pizza?', a:['Garbanzo','Maíz','Arroz','Mandioca'], d:'Pizza con fainá encima se dice "a caballo": la fainá va montada arriba.'},
+  {cat:'Festivales', q:'¿Qué festival de música se hace cada año en el Hipódromo de San Isidro?', a:['Lollapalooza Argentina','Cosquín Rock','Quilmes Rock','Primavera Sound'], d:'El Cosquín Rock, en cambio, se hace en Córdoba, en Santa María de Punilla.'},
+  {cat:'Tele', q:'¿En qué serie de Disney se hizo famosa Tini Stoessel?', a:['Violetta','Soy Luna','Patito Feo','Casi Ángeles'], d:'Violetta se filmó en Buenos Aires y fue un éxito en toda Latinoamérica y Europa.'},
+  {cat:'Tele', q:'¿Quién creó "Chiquititas" y "Casi Ángeles"?', a:['Cris Morena','Adrián Suar','Marcelo Tinelli','Susana Giménez'], d:'También creó "Rebelde Way", que después tuvo su versión mexicana: "Rebelde", la de RBD.'},
+  {cat:'Panadería', q:'Las medialunas argentinas se dividen en dos tipos. ¿Cuáles?', a:['De manteca y de grasa','Dulces y saladas','Chicas y grandes','De hojaldre y de brioche'], d:'Truco de panadería: las de manteca suelen ser curvas y las de grasa, rectas.'},
+  {cat:'Deportes', q:'¿Cómo se llama la selección argentina de rugby?', a:['Los Pumas','Los Leones','Los Cóndores','Los Gauchos'], d:'En el Mundial de Francia 2007 salieron terceros, su mejor resultado histórico.'},
+  {cat:'Deportes', q:'¿Qué tenista argentino le ganó a Federer la final del US Open 2009?', a:['Juan Martín del Potro','Gastón Gaudio','David Nalbandian','Guillermo Vilas'], d:'Gaudio había ganado Roland Garros en 2004, en una final 100% argentina contra Guillermo Coria.'},
+  {cat:'Fútbol', q:'¿Qué club es conocido como "el Ciclón"?', a:['San Lorenzo','Huracán','Vélez','Estudiantes'], d:'Uno de sus hinchas más famosos fue el papa Francisco. Huracán es "el Globo" y Vélez, "el Fortín".'},
+  {cat:'Fútbol', q:'¿Contra qué selección jugó Argentina la final del Mundial de Qatar 2022?', a:['Francia','Croacia','Brasil','Países Bajos'], d:'Terminó 3 a 3 y Argentina ganó 4 a 2 en los penales.'},
+  {cat:'Tele', q:'¿Qué programa de preguntas conducía Iván de Pineda?', a:['Pasapalabra','Los 8 escalones','¿Quién quiere ser millonario?','Bienvenidos a bordo'], d:'"Los 8 escalones" y "Bienvenidos a bordo" son de Guido Kaczka.'},
+  {cat:'Tele', q:'¿Qué conductora es famosa por el "¡Hola, Susana, te estamos llamando!"?', a:['Susana Giménez','Mirtha Legrand','Moria Casán','Marcela Tinayre'], d:'Mirtha Legrand, en cambio, es famosa por sus almuerzos, que conduce desde 1968.'},
+  {cat:'Streaming', q:'¿En qué evento de boxeo entre streamers, organizado por Ibai, peleó el argentino Spreen?', a:['La Velada del Año','Kings League','Coscu Army Awards','Premios Martín Fierro'], d:'La Kings League, también de Ibai y Piqué, es de fútbol 7 con reglas locas.'},
+  {cat:'Humor', q:'¿Qué grupo de humor argentino tocaba instrumentos inventados por ellos mismos?', a:['Les Luthiers','Midachi','Los Simuladores','Cha Cha Cha'], d:'En 2017 ganaron el Premio Princesa de Asturias de Comunicación y Humanidades.'},
+  {cat:'Lunfardo', q:'¿Qué quiere decir "estar al horno"?', a:['Estar en problemas','Tener mucho calor','Estar enamorado','Estar cocinando'], d:'La versión recargada es "al horno con papas".'},
+  {cat:'Lunfardo', q:'¿Qué significa "chamuyar"?', a:['Hablar para convencer o levantar','Comer mucho','Dormir la siesta','Robar'], d:'Viene del caló, la lengua de los gitanos españoles, y se quedó en el lunfardo.'},
+  {cat:'Rock nacional', q:'¿Qué banda canta "Matador"?', a:['Los Fabulosos Cadillacs','Los Pericos','Bersuit Vergarabat','Divididos'], d:'Salió en 1993 y hoy se canta en canchas y fiestas de todo el mundo.'},
+  {cat:'Rock nacional', q:'¿A qué músico le decían "el Flaco"?', a:['Luis Alberto Spinetta','Charly García','Fito Páez','Andrés Calamaro'], d:'El 23 de enero, día de su cumpleaños, es el Día Nacional del Músico en su honor.'},
+  {cat:'Cumbia', q:'¿Quién es el líder de Damas Gratis, uno de los padres de la cumbia villera?', a:['Pablo Lescano','L-Gante','Ulises Bueno','Dread Mar I'], d:'Antes de Damas Gratis armó Flor de Piedra, otra banda clave del género.'},
+  {cat:'Viajes', q:'¿Desde qué ciudad se va a ver el Glaciar Perito Moreno?', a:['El Calafate','Ushuaia','Bariloche','Puerto Madryn'], d:'Cada tantos años forma un puente de hielo que termina rompiéndose, y es un espectáculo.'},
+  {cat:'Fútbol', q:'¿En qué club de Estados Unidos juega Messi desde 2023?', a:['Inter Miami','LA Galaxy','New York City','Orlando City'], d:'Con Inter Miami ganó la Leagues Cup 2023, su primer título en el club.'},
+  {cat:'Asado', q:'¿Qué es la entraña?', a:['El músculo del diafragma','Un corte de la pata','Una parte de la costilla','El intestino'], d:'Las mollejas son glándulas y los chinchulines son el intestino delgado.'}
+];
+const TOTAL_Q = 50;
+const QTIME = 20000;
+const PREFIX = 'trivia-argenta-v1-';
+const PEER_OPTS = {config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:stun.cloudflare.com:3478'}]}};
+const SHAPES = ['●','▲','■','◆'];
+
+/* ============ utilidades ============ */
+const $app = document.getElementById('app');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store = {
+  get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} },
+  del(k){ try { localStorage.removeItem(k); } catch(e){} }
+};
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-5); }
+function cleanName(n){ return String(n||'').replace(/[\u0000-\u001F​-‏‪-‮]/g,'').replace(/\s+/g,' ').trim().slice(0,20); }
+function fmt(n){ return Number(n||0).toLocaleString('es-AR'); }
+function gameLink(code){ return location.origin + location.pathname + '#' + code; }
+function netPill(state){
+  if(state==='ok') return '<span class="pill"><i></i>Conectado</span>';
+  if(state==='bad') return '<span class="pill bad"><i></i>Sin conexión</span>';
+  return '<span class="pill wait"><i></i>Conectando…</span>';
+}
+let wakeLock = null;
+async function keepAwake(){ try { if('wakeLock' in navigator && document.visibilityState==='visible') wakeLock = await navigator.wakeLock.request('screen'); } catch(e){} }
+function optsHTML(opts, extra){
+  return opts.map((t,i)=>{
+    const e = extra ? extra(i) : {};
+    const tag = e.button ? 'button' : 'div';
+    return `<li><${tag} class="opt o${i} ${e.cls||''}" ${e.button?`data-choice="${i}"`:''}><span class="sh" aria-hidden="true">${SHAPES[i]}</span><span class="tx">${esc(t)}</span>${e.count!=null?`<span class="n">${e.count}</span>`:''}${e.bar!=null?`<span class="votebar" data-w="${e.bar}"></span>`:''}</${tag}></li>`;
+  }).join('');
+}
+function moveHTML(from, to){
+  if(from == null) return '<span class="move same">·</span>';
+  const d = from - to;
+  if(d > 0) return `<span class="move up">▲${d}</span>`;
+  if(d < 0) return `<span class="move down">▼${-d}</span>`;
+  return '<span class="move same">=</span>';
+}
+function podiumHTML(list){
+  const [a,b,c] = list;
+  const col = (p, n) => p ? `<div class="p${n}"><span class="medal">${n}°</span><span class="who">${esc(p.name)}</span><span class="sc">${fmt(p.score)} pts</span></div>` : `<div class="p${n}"></div>`;
+  return `<div class="podium">${col(b,2)}${col(a,1)}${col(c,3)}</div>`;
+}
+
+/* Pintar pantalla. Las animaciones de entrada solo corren cuando cambia la pantalla (key). */
+let lastKey = null;
+function paint(html, key){
+  const fresh = key !== lastKey;
+  lastKey = key;
+  $app.classList.toggle('anim', fresh && !reduceMotion);
+  $app.innerHTML = html;
+  const bars = $app.querySelectorAll('.votebar');
+  if(bars.length) requestAnimationFrame(() => requestAnimationFrame(() => bars.forEach(b => b.style.width = b.dataset.w + '%')));
+  $app.querySelectorAll('[data-count]').forEach(el => {
+    const to = +el.dataset.count, from = fresh && !reduceMotion ? +(el.dataset.from || 0) : to;
+    if(from === to){ el.textContent = fmt(to); return; }
+    const t0 = performance.now(), dur = 1100;
+    const step = now => {
+      const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = fmt(Math.round(from + (to - from) * e));
+      if(k < 1 && el.isConnected) requestAnimationFrame(step);
+    };
+    el.textContent = fmt(from); requestAnimationFrame(step);
+  });
+  return fresh;
+}
+
+/* Papel picado para el podio */
+function confetti(){
+  if(reduceMotion) return;
+  const cv = document.createElement('canvas'); cv.id = 'confetti';
+  document.body.appendChild(cv);
+  const ctx = cv.getContext('2d');
+  const W = cv.width = innerWidth * devicePixelRatio, H = cv.height = innerHeight * devicePixelRatio;
+  cv.style.width = innerWidth + 'px'; cv.style.height = innerHeight + 'px';
+  const colors = ['#74ACDF','#FFFFFF','#F2C230','#D7263D','#8FD18B'];
+  const ps = Array.from({length:160}, () => ({
+    x: Math.random() * W, y: -Math.random() * H * .6, r: (4 + Math.random() * 6) * devicePixelRatio,
+    vx: (Math.random() - .5) * 2 * devicePixelRatio, vy: (2 + Math.random() * 3) * devicePixelRatio,
+    a: Math.random() * 6, va: (Math.random() - .5) * .3, c: colors[Math.random() * colors.length | 0]
+  }));
+  const t0 = performance.now();
+  (function frame(now){
+    ctx.clearRect(0,0,W,H);
+    ps.forEach(p => {
+      p.x += p.vx + Math.sin(p.a) * devicePixelRatio; p.y += p.vy; p.a += p.va;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.fillStyle = p.c;
+      ctx.fillRect(-p.r/2, -p.r/4, p.r, p.r/2); ctx.restore();
+    });
+    if(now - t0 < 6000) requestAnimationFrame(frame); else cv.remove();
+  })(t0);
+}
+
+/* ============ PROFE (anfitrión) ============ */
+const Host = {
+  s:null, peer:null, conns:{}, net:'wait', timer:null, tick:null, idRetries:0, raf:0, seen:new Set(),
+
+  boot(){
+    const saved = store.get('trivia-host');
+    if(saved && saved.phase !== 'final' && saved.code){
+      paint(`
+        <div class="hero enter"><div class="brand">Trivia Argenta</div></div>
+        <div class="filete center form enter" style="--d:2">
+          <p class="eyebrow">Tenés una partida sin terminar</p>
+          <div class="code">${esc(saved.code)}</div>
+          <p class="muted">${saved.phase==='lobby' ? 'Todavía en la sala de espera' : `Iban por la pregunta ${saved.qi+1} de ${saved.order.length}`} · ${Object.keys(saved.players).length} jugadores</p>
+          <button class="btn" id="resume">Retomar esa partida</button>
+          <button class="btn ghost" id="fresh">Empezar una nueva</button>
+        </div>`, 'resume');
+      document.getElementById('resume').onclick = () => { this.s = saved; Object.values(this.s.players).forEach(p => p.on = false); this.start(); };
+      document.getElementById('fresh').onclick = () => this.newGame();
+    } else this.newGame();
+  },
+
+  newGame(){
+    const ids = shuffle(QUESTIONS.map((_,i)=>i)).slice(0, TOTAL_Q);
+    this.s = {
+      code: String(Math.floor(10000 + Math.random()*90000)),
+      phase:'lobby', qi:-1, qEnd:0, players:{}, banned:[],
+      order: ids.map(id => ({id, perm: shuffle([0,1,2,3])}))
+    };
+    this.seen = new Set();
+    this.save(); this.start();
+  },
+
+  start(){
+    this.connectPeer();
+    keepAwake();
+    if(!this.visHooked){
+      this.visHooked = true;
+      document.addEventListener('visibilitychange', () => {
+        if(document.visibilityState !== 'visible') return;
+        keepAwake();
+        if(!this.peer || this.peer.destroyed) this.connectPeer();
+        else if(this.peer.disconnected) try { this.peer.reconnect(); } catch(e){}
+      });
+    }
+    Object.keys(this.s.players).forEach(pid => this.seen.add(pid));
+    if(this.s.phase === 'question'){ if(Date.now() > this.s.qEnd) this.reveal(); else this.armTimer(); }
+    this.render();
+  },
+
+  save(){ store.set('trivia-host', this.s); },
+
+  connectPeer(){
+    if(this.peer){ try { this.peer.destroy(); } catch(e){} }
+    this.net = 'wait';
+    const p = new Peer(PREFIX + this.s.code, PEER_OPTS);
+    this.peer = p;
+    p.on('open', () => { this.net = 'ok'; this.idRetries = 0; this.render(); });
+    p.on('connection', c => this.onConn(c));
+    p.on('disconnected', () => {
+      if(this.peer !== p) return;
+      this.net = 'wait'; this.render();
+      setTimeout(() => { if(this.peer === p && !p.destroyed && p.disconnected) try { p.reconnect(); } catch(e){} }, 1500);
+    });
+    p.on('error', e => {
+      if(this.peer !== p) return;
+      if(e.type === 'unavailable-id'){
+        // Pasa si recargaste la página: el servidor todavía recuerda el código unos segundos.
+        this.idRetries++;
+        this.net = 'wait'; this.render();
+        if(this.idRetries <= 20) setTimeout(() => { if(this.peer === p) this.connectPeer(); }, 3000);
+        else { this.net = 'bad'; this.render(); }
+      } else if(e.type !== 'peer-unavailable'){
+        this.net = 'bad'; this.render();
+        setTimeout(() => { if(this.peer === p && (p.destroyed || p.disconnected)) this.connectPeer(); }, 3000);
+      }
+    });
+  },
+
+  onConn(c){
+    c.on('data', m => this.onMsg(c, m));
+    c.on('close', () => {
+      if(c.pid && this.conns[c.pid] === c){
+        delete this.conns[c.pid];
+        const p = this.s.players[c.pid];
+        if(p){ p.on = false; this.render(); }
+      }
+    });
+    c.on('error', () => {});
+  },
+
+  send(pid, msg){ const c = this.conns[pid]; if(c && c.open) try { c.send(msg); } catch(e){} },
+
+  onMsg(c, m){
+    if(!m || typeof m !== 'object') return;
+    const s = this.s;
+    if(m.t === 'hello'){
+      const pid = String(m.pid || '').slice(0, 40);
+      if(!pid) return;
+      if(s.banned.includes(pid)){ try { c.send({t:'kicked'}); } catch(e){} setTimeout(() => c.close(), 500); return; }
+      let p = s.players[pid];
+      if(!p){
+        if(s.phase === 'final'){ try { c.send({t:'closed'}); } catch(e){} return; }
+        p = s.players[pid] = {name: this.uniqueName(cleanName(m.name) || 'Sin nombre'), score:0, last:0, prev:null, ans:{}, on:true};
+        this.save();
+      }
+      const old = this.conns[pid];
+      c.pid = pid; this.conns[pid] = c; p.on = true;
+      if(old && old !== c) try { old.close(); } catch(e){}
+      this.sendState(pid);
+      if(s.phase === 'lobby') this.broadcast();
+      this.render();
+    } else if(m.t === 'answer'){
+      this.onAnswer(c.pid, m);
+    }
+  },
+
+  uniqueName(name){
+    const taken = new Set(Object.values(this.s.players).map(p => p.name.toLowerCase()));
+    if(!taken.has(name.toLowerCase())) return name;
+    for(let i=2;;i++){ const n = `${name.slice(0,17)} ${i}`; if(!taken.has(n.toLowerCase())) return n; }
+  },
+
+  onAnswer(pid, m){
+    const s = this.s, p = s.players[pid];
+    if(!p || s.phase !== 'question' || m.qi !== s.qi || p.ans[s.qi]) return;
+    const now = Date.now();
+    if(now > s.qEnd + 800) return;
+    const ch = m.choice | 0;
+    if(ch < 0 || ch > 3) return;
+    const o = s.order[s.qi];
+    const right = o.perm.indexOf(0) === ch;
+    const elapsed = Math.max(0, Math.min(QTIME, QTIME - (s.qEnd - now)));
+    const pts = right ? Math.round(500 + 500 * (1 - elapsed / QTIME)) : 0;
+    p.ans[s.qi] = {c: ch, pts};
+    this.save();
+    this.send(pid, {t:'got', qi:s.qi, choice:ch});
+    const online = Object.values(s.players).filter(x => x.on);
+    if(online.length && online.every(x => x.ans[s.qi])) { this.reveal(); return; }
+    this.render();
+  },
+
+  ranking(){
+    return Object.entries(this.s.players)
+      .map(([pid,p]) => ({pid, ...p}))
+      .sort((a,b) => b.score - a.score || a.name.localeCompare(b.name));
+  },
+
+  questionView(qi){
+    const o = this.s.order[qi], Q = QUESTIONS[o.id];
+    return {cat:Q.cat, text:Q.q, opts:o.perm.map(k => Q.a[k]), correct:o.perm.indexOf(0), dato:Q.d};
+  },
+
+  sendState(pid){
+    const s = this.s, p = s.players[pid];
+    if(!p) return;
+    const base = {name:p.name, total:s.order.length, qi:s.qi};
+    if(s.phase === 'lobby'){
+      this.send(pid, {...base, t:'lobby', count:Object.keys(s.players).length});
+    } else if(s.phase === 'question'){
+      const v = this.questionView(s.qi);
+      this.send(pid, {...base, t:'q', cat:v.cat, text:v.text, opts:v.opts, remaining:Math.max(0, s.qEnd - Date.now()), mine: p.ans[s.qi] ? p.ans[s.qi].c : null});
+    } else if(s.phase === 'reveal'){
+      const v = this.questionView(s.qi), r = this.ranking();
+      const a = p.ans[s.qi];
+      this.send(pid, {...base, t:'rev', text:v.text, opts:v.opts, correct:v.correct, dato:v.dato,
+        mine: a ? a.c : null, gained: a ? a.pts : 0, score:p.score, rank: r.findIndex(x => x.pid === pid) + 1, of:r.length});
+    } else if(s.phase === 'board'){
+      const r = this.ranking();
+      const rank = r.findIndex(x => x.pid === pid) + 1;
+      this.send(pid, {...base, t:'board', rank, prev: p.prev, score:p.score, last:p.last, of:r.length,
+        top: r.slice(0,5).map(x => ({name:x.name, score:x.score, last:x.last, prev:x.prev, me:x.pid===pid}))});
+    } else if(s.phase === 'final'){
+      const r = this.ranking();
+      this.send(pid, {...base, t:'fin', score:p.score, rank: r.findIndex(x => x.pid === pid) + 1, of:r.length,
+        podium: r.slice(0,3).map(x => ({name:x.name, score:x.score}))});
+    }
+  },
+
+  broadcast(){ Object.keys(this.conns).forEach(pid => this.sendState(pid)); },
+
+  next(){
+    const s = this.s;
+    if(s.qi + 1 >= s.order.length){ this.finish(); return; }
+    s.qi++; s.phase = 'question'; s.qEnd = Date.now() + QTIME;
+    this.save(); this.armTimer(); this.broadcast(); this.render();
+  },
+
+  armTimer(){
+    clearTimeout(this.timer); clearInterval(this.tick);
+    this.timer = setTimeout(() => this.reveal(), Math.max(0, this.s.qEnd - Date.now() + 500));
+    this.tick = setInterval(() => this.updateClock(), 200);
+  },
+
+  updateClock(){
+    const left = Math.max(0, this.s.qEnd - Date.now());
+    const el = document.getElementById('clock'), bar = document.getElementById('tbar');
+    if(el){ el.textContent = Math.ceil(left / 1000); el.classList.toggle('low', left < 5000 && left > 0); }
+    if(bar){ bar.firstElementChild.style.width = (left / QTIME * 100) + '%'; bar.classList.toggle('low', left < 5000); }
+  },
+
+  reveal(){
+    const s = this.s;
+    if(s.phase !== 'question') return;
+    clearTimeout(this.timer); clearInterval(this.tick);
+    this.ranking().forEach((p, i) => { s.players[p.pid].prev = i + 1; });
+    Object.values(s.players).forEach(p => { const a = p.ans[s.qi]; p.last = a ? a.pts : 0; p.score += p.last; });
+    s.phase = 'reveal';
+    this.save(); this.broadcast(); this.render();
+  },
+
+  showBoard(){ this.s.phase = 'board'; this.save(); this.broadcast(); this.render(); },
+
+  finish(){ this.s.phase = 'final'; this.save(); this.broadcast(); this.render(); },
+
+  kick(pid){
+    const p = this.s.players[pid];
+    if(!p || !confirm(`¿Sacar a "${p.name}" de la partida?`)) return;
+    this.s.banned.push(pid);
+    delete this.s.players[pid];
+    this.send(pid, {t:'kicked'});
+    const c = this.conns[pid]; delete this.conns[pid];
+    if(c) setTimeout(() => { try { c.close(); } catch(e){} }, 500);
+    this.save(); if(this.s.phase === 'lobby') this.broadcast(); this.render();
+  },
+
+  render(){ cancelAnimationFrame(this.raf); this.raf = requestAnimationFrame(() => this.draw()); },
+
+  draw(){
+    const s = this.s;
+    const players = this.ranking();
+    const online = players.filter(p => p.on).length;
+    const head = `<div class="top"><div class="brand">Trivia Argenta</div><div class="row">${netPill(this.net)}<span class="pill">Código ${esc(s.code)}</span></div></div>`;
+    let body = '';
+    const last = s.qi + 1 >= s.order.length;
+
+    if(this.net === 'bad' && this.idRetries > 20){
+      body = `<div class="warn">El código ${esc(s.code)} está abierto en otro dispositivo o pestaña. Cerralo y recargá, o empezá una partida nueva.</div>
+              <button class="btn ghost" data-act="new">Empezar una partida nueva</button>`;
+    }
+    else if(s.phase === 'lobby'){
+      const link = gameLink(s.code);
+      let qr = '';
+      try { const q = qrcode(0,'M'); q.addData(link); q.make(); qr = `<div class="qr"><img alt="Código QR para entrar" src="${q.createDataURL(6,2)}"></div>`; } catch(e){}
+      body = `
+        ${location.protocol === 'file:' ? `<div class="warn">Abriste el archivo desde tu compu, así que los alumnos no van a poder entrar con este link. Abrilo desde la página publicada.</div>` : ''}
+        <div class="filete center form enter">
+          <p class="eyebrow">Los chicos entran con este link</p>
+          <div class="code">${esc(s.code)}</div>
+          <div class="linktext" id="linktext">${esc(link)}</div>
+          <div class="share">
+            <button class="btn small" data-act="copy">Copiar link</button>
+            ${navigator.share ? '<button class="btn small ghost" data-act="share">Compartir</button>' : ''}
+          </div>
+          ${qr}
+        </div>
+        <div class="row enter" style="--d:2"><h3>Jugadores</h3><span class="pill">${players.length} adentro</span></div>
+        ${players.length ? `<ul class="chips">${players.map(p => {
+            const isNew = !this.seen.has(p.pid); this.seen.add(p.pid);
+            return `<li class="${p.on?'':'off'} ${isNew?'new':''}">${esc(p.name)}<button data-kick="${esc(p.pid)}" aria-label="Sacar a ${esc(p.name)}">✕</button></li>`;
+          }).join('')}</ul>`
+          : `<p class="muted enter" style="--d:3"><span class="bob">🧉</span> Todavía no entró nadie<span class="wait-dots"></span></p>`}
+        <button class="btn enter" style="--d:4" data-act="next" ${players.length ? '' : 'disabled'}>Empezar · ${s.order.length} preguntas de 20 s</button>`;
+    }
+    else if(s.phase === 'question'){
+      const v = this.questionView(s.qi);
+      const answered = players.filter(p => p.ans[s.qi]).length;
+      const left = Math.max(0, s.qEnd - Date.now());
+      body = `
+        <div class="row enter"><span class="eyebrow">Pregunta ${s.qi+1} de ${s.order.length}</span><span class="cat">${esc(v.cat)}</span></div>
+        <div class="row"><h2 class="qtext">${esc(v.text)}</h2><div class="clock ${left<5000&&left>0?'low':''}" id="clock">${Math.ceil(left/1000)}</div></div>
+        <div class="tbar ${left<5000?'low':''}" id="tbar"><i style="width:${left/QTIME*100}%"></i></div>
+        <ul class="opts">${optsHTML(v.opts)}</ul>
+        <div class="meter enter" style="--d:7">
+          <div class="row"><span>Respondieron <b>${answered}</b> de ${online}</span><span class="muted">${players.length - online ? `${players.length - online} desconectados` : ''}</span></div>
+          <div class="tbar"><i style="width:${online ? answered/online*100 : 0}%;background:var(--mint)"></i></div>
+        </div>
+        <button class="btn ghost enter" style="--d:8" data-act="reveal">Cortar el tiempo y mostrar la respuesta</button>`;
+    }
+    else if(s.phase === 'reveal'){
+      const v = this.questionView(s.qi);
+      const counts = [0,0,0,0]; players.forEach(p => { const a = p.ans[s.qi]; if(a) counts[a.c]++; });
+      const totalVotes = counts.reduce((a,b) => a+b, 0) || 1;
+      body = `
+        <div class="row enter"><span class="eyebrow">Pregunta ${s.qi+1} de ${s.order.length}</span><span class="cat">${esc(v.cat)}</span></div>
+        <h2 class="qtext">${esc(v.text)}</h2>
+        <ul class="opts rev">${optsHTML(v.opts, i => ({cls: i===v.correct?'ok':'', count: counts[i], bar: Math.round(counts[i]/totalVotes*100)}))}</ul>
+        <p class="muted enter" style="--d:6">Acertaron ${counts[v.correct]} de ${players.length}.</p>
+        <div class="dato enter" style="--d:7"><b>Dato:</b> ${esc(v.dato)}</div>
+        <button class="btn enter" style="--d:8" data-act="board">Ver la tabla de posiciones</button>`;
+    }
+    else if(s.phase === 'board'){
+      const maxShow = 15;
+      body = `
+        <div class="row enter"><span class="eyebrow">Después de la pregunta ${s.qi+1} de ${s.order.length}</span></div>
+        <h2 class="brand enter" style="font-size:2rem">Tabla de posiciones</h2>
+        <ol class="rank board">${players.slice(0, maxShow).map((p,i) => `
+          <li class="${i===0?'lead':''}" style="--i:${i};--from:${p.prev!=null ? Math.min(p.prev-1, maxShow) - i : 0}">
+            <span class="pos">${i+1}</span>${moveHTML(p.prev, i+1)}<span class="nm">${esc(p.name)}</span>
+            ${p.last?`<span class="gain">+${fmt(p.last)}</span>`:''}<span class="pt" data-count="${p.score}" data-from="${p.score - p.last}"></span>
+          </li>`).join('')}</ol>
+        ${players.length > maxShow ? `<p class="muted center">y ${players.length - maxShow} más</p>` : ''}
+        <button class="btn enter" style="--d:6" data-act="next">${last ? 'Ver el podio final' : 'Siguiente pregunta'}</button>`;
+    }
+    else if(s.phase === 'final'){
+      body = `
+        <div class="hero enter"><p class="eyebrow">Terminó la partida</p><div class="brand" style="font-size:2.4rem">Podio</div></div>
+        ${podiumHTML(players)}
+        <h3 class="enter" style="--d:28">Tabla completa</h3>
+        <ol class="rank">${players.map((p,i) => `<li class="enter" style="--d:${29+Math.min(i,20)}"><span class="pos">${i+1}</span><span class="nm">${esc(p.name)}</span><span class="pt">${fmt(p.score)}</span></li>`).join('')}</ol>
+        <button class="btn ghost" data-act="new">Nueva partida</button>`;
+    }
+    const key = `h-${s.phase}-${s.qi}-${this.net==='bad'&&this.idRetries>20}`;
+    const fresh = paint(head + body, key);
+    if(fresh && s.phase === 'final') confetti();
+    $app.querySelectorAll('[data-kick]').forEach(b => b.onclick = () => this.kick(b.dataset.kick));
+    $app.querySelectorAll('[data-act]').forEach(b => b.onclick = () => this.act(b.dataset.act, b));
+  },
+
+  act(a, btn){
+    if(a === 'next') this.next();
+    else if(a === 'reveal') this.reveal();
+    else if(a === 'board') this.showBoard();
+    else if(a === 'new'){
+      if(this.s.phase !== 'final' && !confirm('¿Seguro? Se pierde la partida actual.')) return;
+      try { this.peer && this.peer.destroy(); } catch(e){}
+      clearTimeout(this.timer); clearInterval(this.tick);
+      this.conns = {}; this.idRetries = 0; this.newGame();
+    }
+    else if(a === 'copy'){
+      const link = gameLink(this.s.code);
+      const done = () => { btn.textContent = '¡Copiado!'; setTimeout(() => btn.textContent = 'Copiar link', 1500); };
+      if(navigator.clipboard) navigator.clipboard.writeText(link).then(done, () => this.selectLink());
+      else this.selectLink();
+    }
+    else if(a === 'share'){
+      navigator.share({title:'Trivia Argenta', text:'Entrá a la trivia:', url:gameLink(this.s.code)}).catch(() => {});
+    }
+  },
+  selectLink(){ const el = document.getElementById('linktext'); const r = document.createRange(); r.selectNodeContents(el); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); }
+};
+
+/* ============ ALUMNO ============ */
+const Student = {
+  code:'', pid:'', name:'', peer:null, conn:null, st:null, net:'wait', view:'join',
+  deadline:0, mine:null, tick:null, rt:null, kicked:false,
+
+  boot(code){
+    this.code = code;
+    const saved = store.get('trivia-me-' + code);
+    this.pid = (saved && saved.pid) || uid();
+    this.name = (saved && saved.name) || '';
+    if(this.name){ this.view = 'connecting'; this.connect(); }
+    this.render();
+    document.addEventListener('visibilitychange', () => {
+      if(document.visibilityState === 'visible' && this.name && !this.kicked && !(this.conn && this.conn.open)) this.retry(100);
+    });
+  },
+
+  remember(){ store.set('trivia-me-' + this.code, {pid:this.pid, name:this.name}); },
+
+  connect(){
+    this.net = 'wait';
+    if(this.peer && !this.peer.destroyed){ if(this.peer.open) this.dial(); return; }
+    const p = new Peer(PEER_OPTS);
+    this.peer = p;
+    p.on('open', () => this.dial());
+    p.on('disconnected', () => setTimeout(() => { if(this.peer === p && !p.destroyed && p.disconnected) try { p.reconnect(); } catch(e){} }, 1500));
+    p.on('error', e => {
+      if(this.peer !== p) return;
+      if(e.type === 'peer-unavailable'){ this.net = 'bad'; this.hostMissing = true; this.render(); this.retry(4000); }
+      else { this.net = 'bad'; this.render(); try { p.destroy(); } catch(_){} this.peer = null; this.retry(3000); }
+    });
+  },
+
+  dial(){
+    if(this.kicked || (this.conn && this.conn.open)) return;
+    const c = this.peer.connect(PREFIX + this.code, {reliable:true});
+    this.conn = c;
+    c.on('open', () => {
+      this.net = 'ok'; this.hostMissing = false;
+      c.send({t:'hello', pid:this.pid, name:this.name});
+      this.render();
+    });
+    c.on('data', m => this.onMsg(m));
+    c.on('close', () => {
+      if(this.conn !== c) return;
+      this.conn = null;
+      if(!this.kicked){ this.net = 'wait'; this.render(); this.retry(2000); }
+    });
+    c.on('error', () => {});
+    setTimeout(() => { if(this.conn === c && !c.open){ try { c.close(); } catch(e){} this.conn = null; this.retry(500); } }, 9000);
+  },
+
+  retry(ms){
+    clearTimeout(this.rt);
+    this.rt = setTimeout(() => {
+      if(this.kicked) return;
+      if(this.peer && !this.peer.destroyed && this.peer.open) this.dial();
+      else { try { this.peer && this.peer.destroy(); } catch(e){} this.peer = null; this.connect(); }
+    }, ms);
+  },
+
+  onMsg(m){
+    if(!m || typeof m !== 'object') return;
+    if(m.t === 'kicked'){ this.kicked = true; this.view = 'kicked'; store.del('trivia-me-' + this.code); try { this.peer.destroy(); } catch(e){} this.stopTick(); this.render(); return; }
+    if(m.t === 'closed'){ this.kicked = true; this.view = 'closed'; try { this.peer.destroy(); } catch(e){} this.render(); return; }
+    if(m.t === 'got'){ if(this.st && this.st.t === 'q' && this.st.qi === m.qi){ this.mine = m.choice; this.render(); } return; }
+    if(typeof m.name === 'string' && m.name !== this.name){ this.name = m.name; this.remember(); }
+    const sameQ = this.st && this.st.t === 'q' && m.t === 'q' && this.st.qi === m.qi;
+    this.st = m; this.view = m.t;
+    if(m.t === 'q'){
+      this.deadline = performance.now() + m.remaining;
+      if(!sameQ) this.mine = m.mine;
+      else if(m.mine != null) this.mine = m.mine;
+      this.startTick();
+    } else this.stopTick();
+    if(m.t === 'rev' && navigator.vibrate){ try { navigator.vibrate(m.mine === m.correct ? [40,60,40] : 200); } catch(e){} }
+    this.render();
+  },
+
+  answer(i){
+    const st = this.st;
+    if(!st || st.t !== 'q' || this.mine != null) return;
+    if(performance.now() > this.deadline) return;
+    if(!(this.conn && this.conn.open)){ this.flash = 'Sin conexión, esperá un segundo y probá de nuevo.'; this.render(); return; }
+    this.mine = i;
+    try { this.conn.send({t:'answer', qi:st.qi, choice:i}); } catch(e){}
+    if(navigator.vibrate) try { navigator.vibrate(30); } catch(e){}
+    this.render();
+  },
+
+  startTick(){
+    this.stopTick();
+    let expired = false;
+    this.tick = setInterval(() => {
+      const left = Math.max(0, this.deadline - performance.now());
+      const el = document.getElementById('clock'), bar = document.getElementById('tbar');
+      if(el){ el.textContent = Math.ceil(left / 1000); el.classList.toggle('low', left < 5000 && left > 0); }
+      if(bar){ bar.firstElementChild.style.width = (left / QTIME * 100) + '%'; bar.classList.toggle('low', left < 5000); }
+      if(left <= 0 && !expired){ expired = true; this.render(); }
+    }, 100);
+  },
+  stopTick(){ clearInterval(this.tick); },
+
+  render(){
+    const head = this.name && this.view !== 'join'
+      ? `<div class="top"><div class="brand">Trivia Argenta</div>${this.kicked ? '' : netPill(this.net)}</div>` : '';
+    let body = '';
+    const st = this.st;
+
+    if(this.view === 'join'){
+      body = `
+        <div class="hero enter"><div class="brand">Trivia Argenta</div><p>${TOTAL_Q} preguntas sobre todo lo que es bien argentino. 20 segundos cada una. Cuanto más rápido, más puntos.</p></div>
+        <form class="filete form enter" style="--d:2" id="joinform">
+          <p class="eyebrow center">Partida ${esc(this.code)}</p>
+          <div><label for="name">Tu nombre</label><input id="name" maxlength="20" autocomplete="off" placeholder="Como te conocen en el curso" required></div>
+          <button class="btn" type="submit">Entrar</button>
+        </form>`;
+    }
+    else if(this.view === 'kicked'){
+      body = `<div class="big-result bad"><div class="icon">🚫</div><h2>Afuera</h2><p>El profe te sacó de la partida.</p></div>`;
+    }
+    else if(this.view === 'closed'){
+      body = `<div class="big-result neutral"><div class="icon">🏁</div><h2>Ya terminó</h2><p>Esta partida ya terminó. Pedile al profe el link de la próxima.</p></div>`;
+    }
+    else if(this.view === 'connecting' || !st){
+      body = `<div class="big-result neutral"><div class="icon"><span class="bob">🧉</span></div><h2>Entrando<span class="wait-dots"></span></h2>
+        <p class="muted">${this.hostMissing ? `No encontramos la partida ${esc(this.code)}. Si el profe todavía no la abrió, esperá: seguimos intentando.` : `Jugás como <b>${esc(this.name)}</b>.`}</p></div>
+        <button class="linkbtn" data-act="rename">Cambiar de nombre</button>`;
+    }
+    else if(st.t === 'lobby'){
+      body = `<div class="big-result neutral"><div class="icon"><span class="bob">🧉</span></div><h2>¡Adentro!</h2>
+        <p class="stat">Jugás como <b>${esc(this.name)}</b></p>
+        <p class="muted">Esperá que el profe arranque<span class="wait-dots"></span> Ya hay ${st.count} ${st.count===1?'jugador':'jugadores'}.</p></div>`;
+    }
+    else if(st.t === 'q'){
+      const left = Math.max(0, this.deadline - performance.now());
+      const over = left <= 0 && this.mine == null;
+      const locked = this.mine != null || over;
+      body = `
+        <div class="row enter"><span class="eyebrow">Pregunta ${st.qi+1} de ${st.total}</span><span class="cat">${esc(st.cat)}</span></div>
+        <div class="row"><h2 class="qtext">${esc(st.text)}</h2><div class="clock ${left<5000&&left>0?'low':''}" id="clock">${Math.ceil(left/1000)}</div></div>
+        <div class="tbar ${left<5000?'low':''}" id="tbar"><i style="width:${left/QTIME*100}%"></i></div>
+        <ul class="opts ${locked?'locked':''}">${optsHTML(st.opts, i => ({button: !locked, cls: this.mine===i?'me':''}))}</ul>
+        ${this.mine != null ? `<p class="center muted">Listo, tu respuesta ya está. Esperá a que termine el tiempo<span class="wait-dots"></span></p>` : ''}
+        ${over ? `<p class="center muted">Se terminó el tiempo.</p>` : ''}
+        ${this.flash ? `<p class="center warn">${esc(this.flash)}</p>` : ''}`;
+      this.flash = '';
+    }
+    else if(st.t === 'rev'){
+      const ok = st.mine === st.correct, none = st.mine == null;
+      const cls = none ? 'neutral' : ok ? 'good' : 'bad';
+      body = `
+        <div class="big-result ${cls}">
+          <div class="icon">${none ? '⏱️' : ok ? '✅' : '❌'}</div>
+          <h2>${none ? 'No llegaste' : ok ? `+<span data-count="${st.gained}" data-from="0"></span>` : 'Uy, no'}</h2>
+          <p class="stat enter" style="--d:3">Tenés <b>${fmt(st.score)}</b> puntos · vas <b>${st.rank}°</b> de ${st.of}</p>
+        </div>
+        <ul class="opts rev">${optsHTML(st.opts, i => ({cls: (i===st.correct?'ok ':'') + (i===st.mine?'me':'')}))}</ul>
+        <div class="dato enter" style="--d:7"><b>Dato:</b> ${esc(st.dato)}</div>`;
+    }
+    else if(st.t === 'board'){
+      const inTop = st.top.some(x => x.me);
+      const d = st.prev != null ? st.prev - st.rank : 0;
+      body = `
+        <div class="big-result ${d>0?'good':d<0?'bad':'neutral'}">
+          <p class="eyebrow">Tu posición</p>
+          <h2 style="font-size:3.2rem">${st.rank}°</h2>
+          <p class="stat">de ${st.of} · <b data-count="${st.score}" data-from="${st.score - st.last}"></b> puntos</p>
+          <p class="muted enter" style="--d:4">${st.prev == null ? '' : d>0 ? `Subiste ${d} ${d===1?'puesto':'puestos'} 🔥` : d<0 ? `Bajaste ${-d} ${d===-1?'puesto':'puestos'}` : 'Mantuviste tu puesto'}</p>
+        </div>
+        <h3 class="enter" style="--d:5">Top 5</h3>
+        <ol class="rank board">${st.top.map((p,i) => `
+          <li class="${p.me?'me':''} ${i===0?'lead':''}" style="--i:${i};--from:${p.prev!=null ? Math.min(p.prev-1, 5) - i : 0}">
+            <span class="pos">${i+1}</span>${moveHTML(p.prev, i+1)}<span class="nm">${esc(p.name)}</span><span class="pt">${fmt(p.score)}</span>
+          </li>`).join('')}
+          ${inTop ? '' : `<li class="me enter" style="--d:8"><span class="pos">${st.rank}</span>${moveHTML(st.prev, st.rank)}<span class="nm">${esc(this.name)} (vos)</span><span class="pt">${fmt(st.score)}</span></li>`}
+        </ol>
+        <p class="center muted">${st.qi+1 >= st.total ? 'Ahora viene el podio' : 'Esperá la próxima pregunta'}<span class="wait-dots"></span></p>`;
+    }
+    else if(st.t === 'fin'){
+      body = `
+        <div class="big-result ${st.rank<=3?'good':'neutral'}">
+          <div class="icon">${st.rank===1?'🏆':st.rank<=3?'🥇':'🇦🇷'}</div>
+          <h2>Saliste ${st.rank}°</h2>
+          <p class="stat">de ${st.of} jugadores, con <b>${fmt(st.score)}</b> puntos</p>
+        </div>
+        ${podiumHTML(st.podium)}`;
+    }
+    const key = `s-${this.view}-${st ? st.t + '-' + st.qi : ''}`;
+    const fresh = paint(head + body, key);
+    if(fresh && st && st.t === 'fin' && this.view === 'fin') confetti();
+
+    const f = document.getElementById('joinform');
+    if(f){
+      const inp = document.getElementById('name');
+      inp.focus();
+      f.onsubmit = e => {
+        e.preventDefault();
+        const n = cleanName(inp.value);
+        if(!n){ inp.focus(); return; }
+        this.name = n; this.remember(); this.view = 'connecting'; this.connect(); this.render();
+      };
+    }
+    $app.querySelectorAll('button[data-choice]').forEach(b => b.onclick = () => this.answer(+b.dataset.choice));
+    const rn = $app.querySelector('[data-act="rename"]');
+    if(rn) rn.onclick = () => { this.view = 'join'; try { this.peer && this.peer.destroy(); } catch(e){} this.peer = null; this.conn = null; clearTimeout(this.rt); this.render(); };
+  }
+};
+
+/* ============ INICIO ============ */
+function landing(){
+  paint(`
+    <div class="hero enter"><div class="brand">Trivia Argenta</div><p>Cultura general bien de acá: fútbol, trap, kiosco, tele, lunfardo y más.</p></div>
+    <form class="filete form enter" style="--d:2" id="codeform">
+      <div><label for="code">Código de la partida</label><input id="code" inputmode="numeric" maxlength="5" placeholder="5 números" autocomplete="off"></div>
+      <button class="btn" type="submit">Seguir</button>
+    </form>
+    <div class="center enter" style="--d:3"><button class="linkbtn" id="host">Soy el profe: crear una partida</button></div>`, 'landing');
+  document.getElementById('codeform').onsubmit = e => {
+    e.preventDefault();
+    const c = document.getElementById('code').value.replace(/\D/g,'');
+    if(c.length === 5){ location.hash = c; }
+  };
+  document.getElementById('host').onclick = () => { location.hash = 'profe'; };
+}
+function route(){
+  const h = decodeURIComponent(location.hash.slice(1));
+  if(typeof Peer === 'undefined'){
+    $app.innerHTML = `<div class="warn">No se pudo cargar el juego. Revisá la conexión a internet y recargá la página.</div>`;
+    return;
+  }
+  if(h === 'profe') Host.boot();
+  else if(/^\d{5}$/.test(h)) Student.boot(h);
+  else landing();
+}
+window.addEventListener('hashchange', () => location.reload());
+route();
+</script>
+</body>
+</html>
